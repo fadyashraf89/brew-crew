@@ -18,13 +18,25 @@ class AuthService {
       return null;
     }
   }
-  Stream<UserData?> get user{
-    return _auth.authStateChanges().map(CreateUserFromFirebaseUser);
 
+  // Make this stream nullable
+  Stream<UserData?>? get MyUser { // Make this explicitly nullable
+    return _auth.authStateChanges().map(CreateUserFromFirebaseUser);
   }
 
+
   UserData? CreateUserFromFirebaseUser(User? user) {
-    return user != null ? UserData(uid: user.uid) : null;
+    return user != null ? UserData(user.uid) : null;
+  }
+  Future SignOut() async{
+    try{
+      return await _auth.signOut();
+    }
+    catch(e){
+      print(e.toString());
+      return null;
+    }
+
   }
 }
 

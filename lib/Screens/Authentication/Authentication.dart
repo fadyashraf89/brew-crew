@@ -1,3 +1,4 @@
+import "package:brew_crew/Services/SignUp.dart";
 import "package:flutter/material.dart";
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
@@ -9,6 +10,8 @@ class AuthenticationScreen extends StatefulWidget {
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   @override
   Widget build(BuildContext context) {
-    return Text("Auth");
+    return Container(
+      child: SignUpPage(),
+    );
   }
 }

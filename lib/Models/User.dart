@@ -1,5 +1,5 @@
 class UserData {
   final String uid;
 
-  UserData({required this.uid});
+  UserData(this.uid);
 }

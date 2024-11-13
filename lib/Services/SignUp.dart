@@ -1,18 +1,18 @@
+import 'package:brew_crew/Services/SignIn.dart';
 import 'package:brew_crew/Services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../Widgets/MyAppBar.dart';
-import 'SignUp.dart';
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final AuthService _authService = AuthService();
   bool showPassword = false;
   IconData icon = Icons.visibility_off;
@@ -33,9 +33,9 @@ class _SignInPageState extends State<SignInPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Sign In",style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32
+                Text("Sign Up",style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32
                 ),),
                 Container(
                   child: ElevatedButton(
@@ -127,28 +127,29 @@ class _SignInPageState extends State<SignInPage> {
                           print(emailController.text +" "+ passwordController.text);
                         }
                       },
-                      child: Text("Sign In")
+                      child: Text("Sign Up"),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account ?"),
+                      const Text("Aready have an account ?"),
                       TextButton(
                         onPressed: (){
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                              const SignUpPage(), // Pass the email to home screen
+                              const SignInPage(), // Pass the email to home screen
                             ),
                           );
-                        }, child: Text("Register Now", style: TextStyle(
+                        }, child: Text("Sign In", style: TextStyle(
                           color: Colors.black.withOpacity(0.8),
                           fontWeight: FontWeight.bold
                       ),),
                       )
                     ],
                   )
+
                 ],
               ),
             )
