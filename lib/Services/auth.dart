@@ -28,6 +28,7 @@ class AuthService {
   UserData? CreateUserFromFirebaseUser(User? user) {
     return user != null ? UserData(user.uid) : null;
   }
+
   Future SignOut() async{
     try{
       return await _auth.signOut();
@@ -36,7 +37,40 @@ class AuthService {
       print(e.toString());
       return null;
     }
-
   }
+
+  Future<UserData?> registerWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User? user = result.user;
+      return CreateUserFromFirebaseUser(user); // Return UserData object
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<UserData?> SignInWithEmailAndPassword(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+      // If sign-in is successful, return UserData
+      return CreateUserFromFirebaseUser(credential.user);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    // If sign-in fails or there's an exception, return null
+    return null;
+  }
+
 }
+
+
 

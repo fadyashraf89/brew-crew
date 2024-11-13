@@ -14,6 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.brown[50],
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
         title: Text("Brew Crew", style: TextStyle(

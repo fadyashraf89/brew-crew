@@ -1,10 +1,9 @@
 import 'package:brew_crew/Screens/Home/HomeScreen.dart';
-import 'package:brew_crew/Services/SignIn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:brew_crew/Models/User.dart';
 
-import 'Authentication/Authentication.dart'; // Import your UserData model
+import 'Authentication/SignIn.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
@@ -16,7 +15,7 @@ class Wrapper extends StatelessWidget {
 
     // return either Home or Authenticate widget
     if (user == null) {
-      return AuthenticationScreen();
+      return SignInPage();
     } else {
       return HomeScreen();
     }
