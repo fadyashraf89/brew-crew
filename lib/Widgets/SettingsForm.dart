@@ -127,11 +127,6 @@ class _SettingsFormState extends State<SettingsForm> {
                             currentStrength ?? (data?.strength ?? 100),
                           );
                           // Update the stream after updating the data
-                          DatabaseService(user.uid).updateUserData(
-                            currentSugar ?? (data?.sugar ?? "0"),
-                            currentName ?? (data?.name ?? ''),
-                            currentStrength ?? (data?.strength ?? 100),
-                          );
                           Navigator.pop(context);
                         }
                       },
