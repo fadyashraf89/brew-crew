@@ -1,5 +1,7 @@
 import 'package:brew_crew/Models/User.dart';
+import 'package:brew_crew/Services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -9,6 +11,7 @@ class AuthService {
       UserCredential userCredential = await _auth.signInAnonymously();
       User? user = userCredential.user;
       print("Signed in as: ${user?.uid}");
+      await DatabaseService(user!.uid).updateUserData('0', 'New Member', 0);
       return user;
     } catch (e) {
       print("Error in anonymous sign-in: $e");
@@ -20,20 +23,19 @@ class AuthService {
   }
 
   // Make this stream nullable
-  Stream<UserData?>? get MyUser { // Make this explicitly nullable
+  Stream<UserData?>? get MyUser {
+    // Make this explicitly nullable
     return _auth.authStateChanges().map(CreateUserFromFirebaseUser);
   }
-
 
   UserData? CreateUserFromFirebaseUser(User? user) {
     return user != null ? UserData(user.uid) : null;
   }
 
-  Future SignOut() async{
-    try{
+  Future SignOut() async {
+    try {
       return await _auth.signOut();
-    }
-    catch(e){
+    } catch (e) {
       print(e.toString());
       return null;
     }
@@ -41,22 +43,41 @@ class AuthService {
 
   Future<UserData?> registerWithEmailAndPassword(String email, String password) async {
     try {
+      // Check if email is already in use
+      final list = await _auth.fetchSignInMethodsForEmail(email);
+      if (list.isNotEmpty) {
+        // Email is already in use
+        throw FirebaseAuthException(
+          code: 'email-already-in-use',
+          message: 'The account already exists for that email.',
+        );
+      }
+
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return CreateUserFromFirebaseUser(user); // Return UserData object
+      await DatabaseService(user!.uid).updateUserData('0', 'New Member', 100);
+      return CreateUserFromFirebaseUser(user);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      } else if (e.code == 'invalid-email') {
+        print('The email address is not valid.');
+      }
+      rethrow; // Re-throw the exception to be handled by the caller
     } catch (e) {
       print(e.toString());
-      return null;
+      rethrow; // Re-throw the exception to be handled by the caller
     }
   }
 
-  Future<UserData?> SignInWithEmailAndPassword(String email, String password) async {
+  Future<UserData?> SignInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password
-      );
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       // If sign-in is successful, return UserData
       return CreateUserFromFirebaseUser(credential.user);
     } on FirebaseAuthException catch (e) {
@@ -69,8 +90,4 @@ class AuthService {
     // If sign-in fails or there's an exception, return null
     return null;
   }
-
 }
-
-
-

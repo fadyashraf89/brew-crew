@@ -2,10 +2,10 @@ import 'package:brew_crew/Screens/Home/HomeScreen.dart';
 import 'package:brew_crew/Services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import '../../Widgets/MyAppBar.dart';
 import 'SignIn.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -21,6 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,27 +33,12 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Sign Up",style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32
-                  ),),
-                  Container(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        AuthService authService = AuthService();
-                        User? user = await authService.signInAnonymously();
-                        if (user != null) {
-                          print("Successfully signed in anonymously with UID: ${user.uid}");
-                          print (authService.CreateUserFromFirebaseUser(user));
-                        } else {
-                          print("Failed to sign in anonymously.");
-                        }
-                      },
-                      child: const Text("Sign In Anonymously"),
-                    ),
+                  Text(
+                    "Sign Up",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
                   ),
                 ],
               ),
@@ -76,11 +62,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.5))),
+                            borderSide: BorderSide(
+                                color: Colors.black.withOpacity(0.5))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: Colors.black, width: 2)),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 2)),
                       ),
                     ),
                     const SizedBox(
@@ -113,11 +100,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.5))),
+                            borderSide: BorderSide(
+                                color: Colors.black.withOpacity(0.5))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: Colors.black, width: 2)),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 2)),
                       ),
                     ),
                     const SizedBox(
@@ -126,48 +114,53 @@ class _SignUpPageState extends State<SignUpPage> {
                     ElevatedButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          dynamic result = await _authService.registerWithEmailAndPassword(
-                              emailController.text, passwordController.text);
-        
-                          if (result == null) {
-                            // Show error message to the user (e.g., using a SnackBar)
+                          try {
+                            dynamic result = await _authService.registerWithEmailAndPassword(
+                                emailController.text, passwordController.text);
+                            if (result != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomeScreen(),
+                                ),
+                              );
+                            }
+                          } on FirebaseAuthException catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error signing up')),
+                              SnackBar(content: Text(e.message ?? 'Error signing up')),
                             );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                const HomeScreen(), // Pass the email to home screen
-                              ),
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error signing up: ${e.toString()}')),
                             );
                           }
                         }
                       },
-                      child: Text("Sign Up"),
+                      child: const Text("Sign Up"),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Aready have an account ?"),
+                        const Text("Already have an account ?"),
                         TextButton(
-                          onPressed: (){
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                const SignInPage(), // Pass the email to home screen
+                                    const SignInPage(), // Pass the email to home screen
                               ),
                             );
-                          }, child: Text("Sign In", style: TextStyle(
-                            color: Colors.black.withOpacity(0.8),
-                            fontWeight: FontWeight.bold
-                        ),),
+                          },
+                          child: Text(
+                            "Sign In",
+                            style: TextStyle(
+                                color: Colors.black.withOpacity(0.8),
+                                fontWeight: FontWeight.bold),
+                          ),
                         )
                       ],
                     )
-        
                   ],
                 ),
               )
@@ -177,6 +170,4 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
-
 }

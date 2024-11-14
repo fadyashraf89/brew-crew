@@ -1,11 +1,10 @@
 import 'package:brew_crew/Screens/Home/HomeScreen.dart';
 import 'package:brew_crew/Services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import '../../Widgets/MyAppBar.dart';
 import 'SignUp.dart';
+
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
@@ -21,6 +20,7 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,27 +32,12 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Sign In",style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32
-                  ),),
-                  Container(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        AuthService authService = AuthService();
-                        User? user = await authService.signInAnonymously();
-                        if (user != null) {
-                          print("Successfully signed in anonymously with UID: ${user.uid}");
-                          print (authService.CreateUserFromFirebaseUser(user));
-                        } else {
-                          print("Failed to sign in anonymously.");
-                        }
-                      },
-                      child: const Text("Sign In Anonymously"),
-                    ),
+                  Text(
+                    "Sign In",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
                   ),
                 ],
               ),
@@ -76,11 +61,12 @@ class _SignInPageState extends State<SignInPage> {
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.5))),
+                            borderSide: BorderSide(
+                                color: Colors.black.withOpacity(0.5))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: Colors.black, width: 2)),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 2)),
                       ),
                     ),
                     const SizedBox(
@@ -113,11 +99,12 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.5))),
+                            borderSide: BorderSide(
+                                color: Colors.black.withOpacity(0.5))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: Colors.black, width: 2)),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 2)),
                       ),
                     ),
                     const SizedBox(
@@ -127,43 +114,56 @@ class _SignInPageState extends State<SignInPage> {
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
                           dynamic result = await _authService.SignInWithEmailAndPassword(
-                              emailController.text, passwordController.text);
+                            emailController.text,
+                            passwordController.text,
+                          );
 
                           if (result == null) {
-                            // Show error message to the user (e.g., using a SnackBar)
+                            // Incorrect sign-in
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error signing in')),
+                              const SnackBar(
+                                content: Text('Error signing in'),
+                                backgroundColor: Colors.red, // Red for error
+                              ),
                             );
                           } else {
+                            // Correct sign-in
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Sign-in successful'),
+                                backgroundColor: Colors.green, // Green for success
+                              ),
+                            );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                const HomeScreen(), // Pass the email to home screen
+                                builder: (context) => const HomeScreen(),
                               ),
                             );
                           }
                         }
                       },
-                      child: Text("Sign In"),
-                    ),
-                    Row(
+                      child: const Text("Sign In"),
+                    ),                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Don't have an account ?"),
                         TextButton(
-                          onPressed: (){
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                const SignUpPage(), // Pass the email to home screen
+                                    const SignUpPage(), // Pass the email to home screen
                               ),
                             );
-                          }, child: Text("Register Now", style: TextStyle(
-                            color: Colors.black.withOpacity(0.8),
-                            fontWeight: FontWeight.bold
-                        ),),
+                          },
+                          child: Text(
+                            "Register Now",
+                            style: TextStyle(
+                                color: Colors.black.withOpacity(0.8),
+                                fontWeight: FontWeight.bold),
+                          ),
                         )
                       ],
                     )
@@ -176,6 +176,4 @@ class _SignInPageState extends State<SignInPage> {
       ),
     );
   }
-
-
 }

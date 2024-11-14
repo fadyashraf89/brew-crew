@@ -1,7 +1,7 @@
+import 'package:brew_crew/Models/User.dart';
 import 'package:brew_crew/Screens/Home/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:brew_crew/Models/User.dart';
 
 import 'Authentication/SignIn.dart';
 
@@ -15,9 +15,9 @@ class Wrapper extends StatelessWidget {
 
     // return either Home or Authenticate widget
     if (user == null) {
-      return SignInPage();
+      return const SignInPage();
     } else {
-      return HomeScreen();
+      return const HomeScreen();
     }
   }
 }
